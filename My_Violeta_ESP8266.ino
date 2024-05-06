@@ -1,5 +1,5 @@
 // Project: ESP8266 Laundry Room Controller
-// Version: 2.09
+// Version: 3.0
 // Description: Manages laundry room environment and settings through various sensors and inputs.
 // Engineer: FA+
 // Architect/PM: FA
@@ -148,22 +148,22 @@ void checkAndAdjustSetTemperature(int potValue) {
     float newSetTemp = adjustTemperature(potValue);                                          // Map potentiometer value to the temperature range
 
     // Log values in a group for easy readability
-    LOG_VERBOSE("** Temperature Adjustment **");
-    LOG_VERBOSE("Potentiometer Value: " + String(potValue));
-    LOG_VERBOSE("New Set Temperature: " + String(newSetTemp));
+    LOG_VERBOSE("1. : C.4.2 <2.09> ::: System Configuration : ** Temperature Adjustment **");
+    LOG_VERBOSE("2. : C.4.2 <2.09> ::: checkAndAdjustSetTemperature() : Potentiometer Value: " + String(potValue));
+    LOG_VERBOSE("3. : C.4.2 <2.09> ::: checkAndAdjustSetTemperature() : New Set Temperature: " + String(newSetTemp));
 
     // Adjust only if there's a significant difference
     if (abs(newSetTemp - lastSetTemp) > 0.5) {                                             // Reduce threshold for quicker response
         setTemp = newSetTemp;
         lastSetTemp = setTemp;                                                              // Update last known set temperature
 
-        LOG_VERBOSE("Updated Set Temp: " + String(setTemp));
-        LOG_INFO("Temperature adjusted successfully.");
+        LOG_VERBOSE("4. : C.4.2 <2.09> ::: checkAndAdjustSetTemperature() : Updated Set Temp: " + String(setTemp));
+        LOG_INFO("5. : C.4.2 <2.09> ::: checkAndAdjustSetTemperature() : Temperature adjusted successfully.");
 
         // Trigger a screen update to reflect changes
         updateScreen(SET_TEMPERATURE);                                                      // Refresh screen with updated temperature
     } else {
-        LOG_WARN("No significant temperature change detected, skipping update.");
+        LOG_WARN("6. : C.4.2 <2.09> ::: checkAndAdjustSetTemperature() : No significant temperature change detected, skipping update.");
     }
 }
 
@@ -176,7 +176,7 @@ void switchToState(ScreenState newState) {
     if (currentState != newState) {
         currentState = newState;
         updateScreen(static_cast<Screen>(newState));                        // Convert to Screen enum for LCD update
-        LOG_INFO("Switched to state: " + String(currentState));
+        LOG_INFO("7. : C.4.3 <2.09> ::: switchToState() : Switched to state: " + String(currentState));
     }
 }
 
@@ -187,7 +187,7 @@ void switchToState(ScreenState newState) {
 
 void setup() {
     Serial.begin(115200);
-    LOG_INFO("System Initialization...");
+    LOG_INFO("8. : D.1.1 <2.09> ::: setup() : System Initialization...");
     initializeSystem();
 }
 
@@ -201,7 +201,7 @@ void loop() {
     long timeSinceLastActivity = millis() - lastActivityTime;
     if (timeSinceLastActivity > 10000 && currentScreen != MAIN_SCREEN) {
         updateScreen(MAIN_SCREEN);
-        LOG_INFO("Returned to Main Screen due to inactivity.");
+        LOG_INFO("9. : D1.1.2 <2.09> ::: loop() : Returned to Main Screen due to inactivity.");
     }
 }
 
@@ -221,7 +221,7 @@ void initializeSystem() {
     updateScreen(MAIN_SCREEN);                          // Use updateScreen to handle all display updates
     waitForSensorStabilization();
     allowTempAdjust = true;                             // Enable temperature adjustments after initial setup
-    LOG_INFO("System Initialization Complete. Main screen displayed.");
+    LOG_INFO("10. : D.2.1.1 <2.09> ::: initializeSystem() : System Initialization Complete. Main screen displayed.");
 }
 
 // D2.1.2 <2.09>:    AutoStabilization Routine
@@ -239,7 +239,7 @@ void waitForSensorStabilization() {
         lastReading = currentReading;
         delay(100);                                     // Short delay between readings
     }
-    LOG_INFO("Sensor stabilized.");
+    LOG_INFO("11. : D.2.1.2 <2.09> ::: waitForSensorStabilization() : Sensor stabilized.");
 }
 
 /* ::: E <2.09>:     Sensor and Communication Initialization :::
@@ -256,7 +256,7 @@ void initializeSensors() {
     radio.startListening();
     dht.begin();
     pinMode(BUTTON_PIN, INPUT_PULLUP);
-    LOG_INFO("All sensors initialized successfully.");
+    LOG_INFO("12. : E.1.1 <2.09> ::: initializeSensors() : All sensors initialized successfully.");
 }
 
 // E.1.2 <2.09>:     Initialize Communication - Wifi
@@ -264,7 +264,7 @@ void initializeSensors() {
 void setupWiFi() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    LOG_INFO("Connecting to WiFi...");
+    LOG_INFO("13. : E.1.2 <2.09> ::: setupWiFi() : Connecting to WiFi...");
 }
 
 // E.1.3 <2.09>:     Initialize - Set Date and Time
@@ -274,7 +274,7 @@ void setDateAndTime() {
         timeClient.forceUpdate();
     }
     setTime(timeClient.getEpochTime());
-    LOG_INFO("Time updated to: " + timeClient.getFormattedTime());
+    LOG_INFO("14. : E.1.3 <2.09> ::: setDateAndTime() : Time updated to: " + timeClient.getFormattedTime());
 }
 
 /* ::: F <2.09>:     Display Functions :::
@@ -293,9 +293,9 @@ void displayMainScreen() {
     snprintf(tempBuffer, sizeof(tempBuffer), "Room:%d Set:%d", int(roomTemp), int(setTemp));
     lcd.setCursor(0, 1);
     lcd.print(tempBuffer);
-    LOG_VERBOSE("** Main Screen Displayed **");
-    LOG_VERBOSE("Room Temperature: " + String(roomTemp));
-    LOG_VERBOSE("Set Temperature: " + String(setTemp));
+    LOG_VERBOSE("15. : F.1.1 <2.09> ::: displayMainScreen() : ** Main Screen Displayed **");
+    LOG_VERBOSE("16. : F.1.1 <2.09> ::: displayMainScreen() : Room Temperature: " + String(roomTemp));
+    LOG_VERBOSE("17. : F.1.1 <2.09> ::: displayMainScreen() : Set Temperature: " + String(setTemp));
 }
 
 // F.1.2 <2.09>: Screen 1 - Setting Temperature
@@ -315,9 +315,9 @@ void displaySetTemperatureScreen() {
         lcd.print("Set Temp: " + String(setTempInt) + "F");
         lcd.setCursor(0, 1);
         lcd.print("Current: " + String(currentTempInt) + "F");
-        LOG_VERBOSE("** Set Temperature Screen Displayed **");
-        LOG_VERBOSE("Set Temperature: " + String(setTempInt));
-        LOG_VERBOSE("Current Room Temperature: " + String(currentTempInt));
+        LOG_VERBOSE("18. : F.1.2 <2.09> ::: displaySetTemperatureScreen() : ** Set Temperature Screen Displayed **");
+        LOG_VERBOSE("19. : F.1.2 <2.09> ::: displaySetTemperatureScreen() : Set Temperature: " + String(setTempInt));
+        LOG_VERBOSE("20. : F.1.2 <2.09> ::: displaySetTemperatureScreen() : Current Room Temperature: " + String(currentTempInt));
     }
 
     lastSetTemp = setTempInt;
@@ -334,9 +334,9 @@ void displayHumidityTempScreen() {
     lcd.print("Humidity: " + String(int(humidity)) + "%");
     lcd.setCursor(0, 1);
     lcd.print("Relay Temp: " + String(int(relayTemp)) + "F");
-    LOG_VERBOSE("** Humidity/Relay Temp Screen Displayed **");
-    LOG_VERBOSE("Humidity: " + String(humidity));
-    LOG_VERBOSE("Relay Temperature: " + String(relayTemp));
+    LOG_VERBOSE("21. : F.1.3 <2.09> ::: displayHumidityTempScreen() : ** Humidity/Relay Temp Screen Displayed **");
+    LOG_VERBOSE("22. : F.1.3 <2.09> ::: displayHumidityTempScreen() : Humidity: " + String(humidity));
+    LOG_VERBOSE("23. : F.1.3 <2.09> ::: displayHumidityTempScreen() : Relay Temperature: " + String(relayTemp));
 }
 
 // F.1.4 <2.09>: Screen 3 - Edit Date & Time
@@ -352,8 +352,8 @@ void displayEditDateTimeScreen() {
         lcd.setCursor(0, 0);
         lcd.print(currentDisplay);
         lastDisplay = currentDisplay;  // Update the last displayed value
-        LOG_VERBOSE("** Edit Date/Time Screen Displayed **");
-        LOG_VERBOSE("Current Display: " + currentDisplay);
+        LOG_VERBOSE("24. : F.1.4 <2.09> ::: displayEditDateTimeScreen() : ** Edit Date/Time Screen Displayed **");
+        LOG_VERBOSE("25. : F.1.4 <2.09> ::: displayEditDateTimeScreen() : Current Display: " + currentDisplay);
     }
 }
 
@@ -362,7 +362,7 @@ void displayEditDateTimeScreen() {
 
 void longPressAction() {
     switchToState(EDIT_DATE_TIME_STATE);                                                    // Switch directly to Screen 3 (Date/Time editing)
-    LOG_INFO("Activated Edit Date/Time Screen via Long Press");
+    LOG_INFO("26. : G.1 <2.09> ::: longPressAction() : Activated Edit Date/Time Screen via Long Press");
 }
 
 /* ::: G.2 <2.09>: ShortPress Screen Transition */
@@ -386,7 +386,7 @@ void shortPressAction() {
         switchToState(MAIN_SCREEN_STATE);                                                   // Return to Main Screen
     }
 
-    LOG_INFO("Performed Screen Transition via Short Press");
+    LOG_INFO("27. : G.2 <2.09> ::: shortPressAction() : Performed Screen Transition via Short Press");
 }
 
 // G.2.1 <2.09>: Switch Screen
@@ -395,7 +395,7 @@ void switchScreens() {
     if (currentScreen == SET_TEMPERATURE || currentScreen == EDIT_DATE_TIME) return;
     Screen nextScreen = (currentScreen == MAIN_SCREEN) ? HUMIDITY_TEMP_SCREEN : MAIN_SCREEN;
     switchToState(static_cast<ScreenState>(nextScreen));  // Convert to ScreenState enum
-    LOG_INFO("Switched Screens via Button Press");
+    LOG_INFO("28. : G.2.1 <2.09> ::: switchScreens() : Switched Screens via Button Press");
 }
 
 // G.3 <2.09>: Activate Backlight
@@ -404,7 +404,7 @@ void activateBacklight() {
     if (!backlightOn) {
         lcd.backlight();
         backlightOn = true;
-        LOG_INFO("Backlight Activated");
+        LOG_INFO("29. : G.3 <2.09> ::: activateBacklight() : Backlight Activated");
     }
     lastActivityTime = millis();            // Reset activity timer whenever the backlight is activated
 }
@@ -415,7 +415,7 @@ void handleAutoScreenOff() {
     if (millis() - lastActivityTime > 30000 && backlightOn) {
         lcd.noBacklight();
         backlightOn = false;
-        LOG_INFO("Backlight Turned Off");
+        LOG_INFO("30. : G.4 <2.09> ::: handleAutoScreenOff() : Backlight Turned Off");
     }
 }
 
@@ -438,7 +438,7 @@ void handleUserInput() {
         backlightActivatedOnly = true;                                                      // Mark backlight-only activation
 
         // Log that the backlight was activated
-        LOG_INFO("Backlight activated via button press.");
+        LOG_INFO("31. : H1.1 <2.09> ::: handleUserInput() : Backlight activated via button press.");
 
         // Temporary feedback (e.g., "Backlight ON")
         //lcd.clear();
@@ -462,18 +462,18 @@ void handleUserInput() {
             lastButtonPressTime = millis();
             activateBacklight();                                                            // Ensure backlight is activated on button press
             backlightActivatedOnly = false;                                                 // Clear the backlight-only flag
-            LOG_VERBOSE("Button pressed. Backlight activated.");
+            LOG_VERBOSE("32. : H1.1 <2.09> ::: handleUserInput() : Button pressed. Backlight activated.");
         }
     } else if (buttonPressed) {
         unsigned long pressDuration = millis() - lastButtonPressTime;
-        LOG_VERBOSE("Button Press Duration: " + String(pressDuration) + " ms");
+        LOG_VERBOSE("33. : H1.1 <2.09> ::: handleUserInput() : Button Press Duration: " + String(pressDuration) + " ms");
 
         if (pressDuration >= 3000) {                                                        // Long Press
             longPressAction();
-            LOG_INFO("Long button press detected. Transition to Edit Date/Time screen.");
+            LOG_INFO("34. : H1.1 <2.09> ::: handleUserInput() : Long button press detected. Transition to Edit Date/Time screen.");
         } else if (pressDuration > 50) {                                                    // Short Press with debouncing
             shortPressAction();
-            LOG_INFO("Short button press detected. Switching screens.");
+            LOG_INFO("35. : H1.1 <2.09> ::: handleUserInput() : Short button press detected. Switching screens.");
         }
         buttonPressed = false;                                                              // Reset button press state
     }
@@ -481,12 +481,12 @@ void handleUserInput() {
     // Knob Handling
     if (abs(currentPotValue - lastPotValue) > 10) {                                         // Adjust threshold to avoid noise
         lastPotValue = currentPotValue;
-        LOG_VERBOSE("Significant Potentiometer Movement Detected. New Value: " + String(currentPotValue));
+        LOG_VERBOSE("36. : H1.1 <2.09> ::: handleUserInput() : Significant Potentiometer Movement Detected. New Value: " + String(currentPotValue));
 
         // Switch to the appropriate screen based on current state
         if (currentScreen != EDIT_DATE_TIME) {
             updateScreen(SET_TEMPERATURE);                                                  // Change directly to Screen 1 (Set Temp)
-            LOG_INFO("Screen switched to Set Temperature due to knob movement.");
+            LOG_INFO("37. : H1.1 <2.09> ::: handleUserInput() : Screen switched to Set Temperature due to knob movement.");
         }
 
         // Reduce update frequency
@@ -496,7 +496,7 @@ void handleUserInput() {
             if (currentScreen == SET_TEMPERATURE || currentScreen == EDIT_DATE_TIME) {
                 lastActivityTime = millis();                                                // Reset inactivity timer
                 handleKnobMovement(currentPotValue);                                        // Apply movement logic
-                LOG_VERBOSE("Knob movement handled. Adjusting settings accordingly.");
+                LOG_VERBOSE("38. : H1.2 <2.09> ::: handleKnobMovement() : Knob movement handled. Adjusting settings accordingly.");
             }
         }
     }
@@ -515,7 +515,7 @@ void handleKnobMovement(int potValue) {
         handleDateTimeEdit(potValue);
         updateScreen(EDIT_DATE_TIME);                                                       // Immediate update via ScreenState
     }
-    LOG_VERBOSE("Knob movement handled.");
+    LOG_VERBOSE("39. : H1.2 <2.09> ::: handleKnobMovement() : Knob movement handled.");
 }
 
 /* :::  H1.3 <2.09>: Handle Date&Time Edit Logic ::: */
@@ -551,7 +551,7 @@ void handleDateTimeEdit(int potValue) {
         displayEditDateTimeScreen();                                                        // Update the screen with new values
         lastAdjustedValue = adjustedValue;
     }
-    LOG_INFO("Date & Time adjustment handled.");
+    LOG_INFO("40. : H1.3 <2.09> ::: handleDateTimeEdit() : Date & Time adjustment handled.");
 }
 
 /* :::  H1.4 <2.09>: Handle Cycling through Date/Time adjustments ::: */
@@ -559,7 +559,7 @@ void handleDateTimeEdit(int potValue) {
 void cycleDateTimeComponents() {
     currentDateTimeComponent = static_cast<DateTimeComponent>((currentDateTimeComponent + 1) % 5);
     displayEditDateTimeScreen();                                                            // Refresh display to indicate the new component being adjusted
-    LOG_INFO("Date/Time component cycled.");
+    LOG_INFO("41. : H1.4 <2.09> ::: cycleDateTimeComponents() : Date/Time component cycled.");
 }
 
 /* :::  I <2.09>:    Temperature Monitoring :::
@@ -574,11 +574,14 @@ void monitorTemperature() {
         heaterOn = true;
         lcd.setCursor(0, 1);
         lcd.print("Heater ON          ");
+        LOG_INFO("42a. : I.1 <2.09> ::: monitorTemperature() : Room Temp < SetTEMP --> Heater_ON");
     } else if (roomTemp > setTemp + 1 and heaterOn) {
         sendRFSignal("HEATER_OFF", setTemp, dateTime);
         heaterOn = false;
         lcd.setCursor(0, 1);
         lcd.print("Heater OFF         ");
+        LOG_INFO("42b. : I.1 <2.09> ::: monitorTemperature() : Room Temp > SetTEMP --> Heater_OFF");
+
     }
     if (relayTemp >= 90.0) {
         digitalWrite(BUZZER_PIN, HIGH);
@@ -586,9 +589,14 @@ void monitorTemperature() {
         lcd.print("ALARM: Temp High!  ");
         delay(1000);                                                                        // Buzzer on for 1 second
         digitalWrite(BUZZER_PIN, LOW);
-        LOG_ERROR("High Temperature Alarm Triggered.");
+        LOG_ERROR("42c. : I.1 <2.09> ::: monitorTemperature() : High Temperature Alarm Triggered.");
     } else {
-//        LOG_INFO("Monitoring temperature...");
+        // Cast setTemp and roomTemp to integers
+        int setTempInt = static_cast<int>(setTemp);
+        int roomTempInt = static_cast<int>(roomTemp);
+
+        // Pass the integer values to the logIfChanged function
+        logIfChanged("I.1 <2.09> ::: monitorTemperature() No Heater ON or Heater OFF action", setTempInt, roomTempInt, 10);
     }
 }
 
@@ -601,7 +609,7 @@ void sendRFSignal(String command, float temp, String dateTime) {
     radio.stopListening();                                                                  // Stop listening before sending
     radio.write(&buffer, sizeof(buffer));                                                   // Send the data to Nano
     radio.startListening();                                                                 // Use the dot to call the startListening method
-    LOG_INFO("RF Command Sent: " + String(buffer));
+    LOG_INFO("44. : J.1 <2.09> ::: sendRFSignal() : RF Command Sent: " + String(buffer));
 }
 
 // J.1.2 <2.09>:  Relay Temperature
